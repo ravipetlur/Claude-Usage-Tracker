@@ -256,6 +256,14 @@ struct Profile: Codable, Identifiable, Equatable {
         return !ClaudeCodeSyncService.shared.isTokenExpired(cliJSON)
     }
 
+    /// True when pinned to a non-default config dir's keychain entry
+    /// (`Claude Code-credentials-<HASH>`), i.e. this account has its own
+    /// Claude Code login outside `~/.claude`.
+    var isPinnedToOwnConfigDir: Bool {
+        guard let svc = customKeychainServiceName else { return false }
+        return svc != ClaudeCodeAccountDiscovery.defaultKeychainServiceName
+    }
+
     var hasAnyCredentials: Bool {
         switch provider {
         case .anthropic:

@@ -13,6 +13,7 @@ struct ManageProfilesView: View {
     @State private var newProfileName = ""
     @State private var newProfileProvider: Provider = .anthropic
     @State private var errorMessage: String?
+    @State private var importMessage: String?
 
     var body: some View {
         ScrollView {
@@ -43,6 +44,21 @@ struct ManageProfilesView: View {
                     icon: "plus.circle.fill"
                 ) {
                     showingCreateProfile = true
+                }
+
+                // Import one pinned profile per signed-in Claude Code config dir
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.extraSmall) {
+                    SettingsButton(
+                        title: "profiles.import_cli".localized,
+                        icon: "square.and.arrow.down"
+                    ) {
+                        importClaudeCodeAccounts()
+                    }
+
+                    Text(importMessage ?? "profiles.import_cli_hint".localized)
+                        .font(DesignTokens.Typography.caption)
+                        .foregroundColor(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
 
                 // Multi-Profile Display Section
@@ -344,6 +360,25 @@ struct ManageProfilesView: View {
         showingCreateProfile = false
         newProfileName = ""
         newProfileProvider = .anthropic
+    }
+
+    private func importClaudeCodeAccounts() {
+        let actions = profileManager.importClaudeCodeAccounts()
+        var added = 0
+        var pinned = 0
+        var unchanged = 0
+        for action in actions {
+            switch action {
+            case .create: added += 1
+            case .pin: pinned += 1
+            case .alreadyTracked: unchanged += 1
+            }
+        }
+        if actions.isEmpty {
+            importMessage = "profiles.import_cli_none".localized
+        } else {
+            importMessage = "profiles.import_cli_result".localized(with: added, pinned, unchanged)
+        }
     }
 }
 

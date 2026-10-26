@@ -92,6 +92,41 @@ class ProfileManager: ObservableObject {
         return newProfile
     }
 
+    /// Creates one profile per signed-in Claude Code config dir (`~/.claude`,
+    /// `~/.claude-*`), each pinned to that dir's keychain entry so its usage is
+    /// tracked no matter which profile is active. Accounts an existing profile
+    /// already covers are pinned in place or left alone, never duplicated.
+    @discardableResult
+    func importClaudeCodeAccounts(
+        discovery: ClaudeCodeAccountDiscovery = ClaudeCodeAccountDiscovery()
+    ) -> [ClaudeCodeAccountDiscovery.ImportAction] {
+        let actions = ClaudeCodeAccountDiscovery.planImport(discovery.discover(), existing: profiles)
+
+        for action in actions {
+            switch action {
+            case .create(let account):
+                var profile = createProfile(name: account.emailAddress)
+                apply(account, to: &profile)
+                updateProfile(profile)
+                LoggingService.shared.log("ProfileManager: imported \(account.emailAddress) from \(account.configDirectory) → \(account.keychainServiceName)")
+            case .pin(let profileId, let account):
+                guard var profile = profiles.first(where: { $0.id == profileId }) else { continue }
+                apply(account, to: &profile)
+                updateProfile(profile)
+                LoggingService.shared.log("ProfileManager: pinned existing profile '\(profile.name)' to \(account.keychainServiceName)")
+            case .alreadyTracked:
+                break
+            }
+        }
+        return actions
+    }
+
+    private func apply(_ account: DiscoveredClaudeCodeAccount, to profile: inout Profile) {
+        profile.customKeychainServiceName = account.keychainServiceName
+        profile.hasCliAccount = true
+        profile.oauthAccountJSON = account.oauthAccountJSON
+    }
+
     func updateProfile(_ profile: Profile) {
         if let index = profiles.firstIndex(where: { $0.id == profile.id }) {
             profiles[index] = profile
@@ -239,7 +274,14 @@ class ProfileManager: ObservableObject {
         // or the Claude Code keychain entry)
         LoggingService.shared.log("Checking CLI credentials for profile '\(updatedProfile.name)': hasJSON=\(updatedProfile.cliCredentialsJSON != nil)")
 
-        if updatedProfile.provider.descriptor.capabilities.cliAccountSync,
+        // A profile pinned to another config dir's keychain entry has its own
+        // Claude Code login there. Copying its tokens into the default entry would
+        // put one refresh-token lineage in two places — whichever side refreshes
+        // second gets invalid_grant and a forced /login — and would replace the
+        // default `claude` login with this account.
+        if updatedProfile.isPinnedToOwnConfigDir {
+            LoggingService.shared.log("Profile '\(updatedProfile.name)' is pinned to \(updatedProfile.customKeychainServiceName ?? "") — leaving the default Claude Code login untouched")
+        } else if updatedProfile.provider.descriptor.capabilities.cliAccountSync,
            updatedProfile.cliCredentialsJSON != nil {
             // Refresh the OAuth token before applying. Stored tokens expire (~8h),
             // so applying a stale snapshot would write a dead access token to the

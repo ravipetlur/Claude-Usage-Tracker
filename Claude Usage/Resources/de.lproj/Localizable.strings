@@ -1093,3 +1093,9 @@
 "support.popup_signature" = "das Ein-Personen-Team hinter Claude Usage";
 "support.popup_body" = "Kostenlos, Open Source, von einer Person gebaut — ohne Werbung, ohne Tracking. Hat es dich je vor einem verbrannten Session-Limit bewahrt, hält ein Kaffee es am Leben.";
 "support.popup_days" = "Behält deine Limits seit %d Tagen im Blick — für immer kostenlos";
+
+/* Import Claude Code accounts */
+"profiles.import_cli" = "Import Claude Code Accounts";
+"profiles.import_cli_hint" = "Adds one profile per signed-in Claude Code config dir (~/.claude and ~/.claude-*), each pinned to its own login.";
+"profiles.import_cli_none" = "No signed-in Claude Code accounts found. Run /login in each config dir, then try again.";
+"profiles.import_cli_result" = "Added %ld, pinned %ld existing, %ld already tracked. Turn on multi-profile display to see them all in the menu bar.";

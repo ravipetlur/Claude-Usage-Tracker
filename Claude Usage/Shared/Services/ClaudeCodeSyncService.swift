@@ -513,6 +513,13 @@ class ClaudeCodeSyncService {
     /// presented. The Security API is fast, doesn't spawn a subprocess, and only
     /// returns attributes for items the app is already entitled to read.
     func listClaudeCodeKeychainServices() -> [String] {
+        claudeCodeKeychainEntries().keys.sorted()
+    }
+
+    /// Same enumeration as `listClaudeCodeKeychainServices()`, keyed by service name
+    /// with each item's last-modified date. Claude Code rewrites its entry whenever
+    /// it rotates tokens, so the date tells which of several logins is in active use.
+    func claudeCodeKeychainEntries() -> [String: Date] {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecMatchLimit as String: kSecMatchLimitAll,
@@ -522,21 +529,22 @@ class ClaudeCodeSyncService {
         let status = SecItemCopyMatching(query as CFDictionary, &result)
         guard status == errSecSuccess else {
             if status != errSecItemNotFound {
-                LoggingService.shared.log("listClaudeCodeKeychainServices: SecItemCopyMatching failed (status=\(status))")
+                LoggingService.shared.log("claudeCodeKeychainEntries: SecItemCopyMatching failed (status=\(status))")
             }
-            return []
+            return [:]
         }
-        guard let items = result as? [[String: Any]] else { return [] }
+        guard let items = result as? [[String: Any]] else { return [:] }
 
         let prefix = "Claude Code-credentials"
-        var found: Set<String> = []
+        var found: [String: Date] = [:]
         for item in items {
             guard let name = item[kSecAttrService as String] as? String else { continue }
             if name == prefix || name.hasPrefix("\(prefix)-") {
-                found.insert(name)
+                let modified = item[kSecAttrModificationDate as String] as? Date ?? .distantPast
+                found[name] = max(found[name] ?? .distantPast, modified)
             }
         }
-        return found.sorted()
+        return found
     }
 
     /// Searches the keychain for a hashed service name matching "Claude Code-credentials-*".

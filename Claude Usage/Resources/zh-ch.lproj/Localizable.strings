@@ -1079,3 +1079,9 @@
 "support.popup_signature" = "Claude Usage 背后的一人团队";
 "support.popup_body" = "免费、开源、一人开发——没有广告，没有跟踪。如果它曾帮你避免烧掉会话额度，一杯咖啡就能让它继续前进。";
 "support.popup_days" = "已守护你的额度 %d 天 — 永久免费";
+
+/* Import Claude Code accounts */
+"profiles.import_cli" = "Import Claude Code Accounts";
+"profiles.import_cli_hint" = "Adds one profile per signed-in Claude Code config dir (~/.claude and ~/.claude-*), each pinned to its own login.";
+"profiles.import_cli_none" = "No signed-in Claude Code accounts found. Run /login in each config dir, then try again.";
+"profiles.import_cli_result" = "Added %ld, pinned %ld existing, %ld already tracked. Turn on multi-profile display to see them all in the menu bar.";

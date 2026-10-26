@@ -1085,3 +1085,9 @@
 "support.popup_signature" = "Claude Usage'ın arkasındaki tek kişilik ekip";
 "support.popup_body" = "Ücretsiz, açık kaynak, tek kişi tarafından yapıldı — reklam yok, izleme yok. Sizi bir oturum limitini yakmaktan kurtardıysa, bir kahve onu ayakta tutar.";
 "support.popup_days" = "%d gündür limitlerinizi izliyor — her zaman ücretsiz";
+
+/* Import Claude Code accounts */
+"profiles.import_cli" = "Import Claude Code Accounts";
+"profiles.import_cli_hint" = "Adds one profile per signed-in Claude Code config dir (~/.claude and ~/.claude-*), each pinned to its own login.";
+"profiles.import_cli_none" = "No signed-in Claude Code accounts found. Run /login in each config dir, then try again.";
+"profiles.import_cli_result" = "Added %ld, pinned %ld existing, %ld already tracked. Turn on multi-profile display to see them all in the menu bar.";

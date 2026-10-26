@@ -1091,3 +1091,9 @@
 "support.popup_body" = "Miễn phí, mã nguồn mở, do một người xây dựng — không quảng cáo, không theo dõi. Nếu nó từng giúp bạn khỏi lãng phí giới hạn phiên, một ly cà phê sẽ giúp nó tiếp tục.";
 "support.popup_days" = "Đồng hành cùng giới hạn của bạn %d ngày — luôn miễn phí";
 "support.popup_later" = "Để sau";
+
+/* Import Claude Code accounts */
+"profiles.import_cli" = "Import Claude Code Accounts";
+"profiles.import_cli_hint" = "Adds one profile per signed-in Claude Code config dir (~/.claude and ~/.claude-*), each pinned to its own login.";
+"profiles.import_cli_none" = "No signed-in Claude Code accounts found. Run /login in each config dir, then try again.";
+"profiles.import_cli_result" = "Added %ld, pinned %ld existing, %ld already tracked. Turn on multi-profile display to see them all in the menu bar.";

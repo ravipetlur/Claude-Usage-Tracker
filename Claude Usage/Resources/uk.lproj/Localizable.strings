@@ -1088,3 +1088,9 @@
 "support.popup_signature" = "команда з однієї людини за Claude Usage";
 "support.popup_body" = "Безплатний, з відкритим кодом, зроблений однією людиною — без реклами й стеження. Якщо він урятував вас від спаленого ліміту сесії, кава тримає його живим.";
 "support.popup_days" = "Пильнує ваші ліміти вже %d днів — завжди безплатно";
+
+/* Import Claude Code accounts */
+"profiles.import_cli" = "Import Claude Code Accounts";
+"profiles.import_cli_hint" = "Adds one profile per signed-in Claude Code config dir (~/.claude and ~/.claude-*), each pinned to its own login.";
+"profiles.import_cli_none" = "No signed-in Claude Code accounts found. Run /login in each config dir, then try again.";
+"profiles.import_cli_result" = "Added %ld, pinned %ld existing, %ld already tracked. Turn on multi-profile display to see them all in the menu bar.";
